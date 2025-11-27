@@ -1,16 +1,15 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Sparkles, MessageSquare } from 'lucide-react';
-import { AnalysisResult, ChatMessage, SolutionOption } from '../types';
+import { Send, Bot, User, Sparkles } from 'lucide-react';
+import { ChatMessage, SolutionOption } from '../types';
 import { streamChatResponse } from '../services/geminiService';
 import ReactMarkdown from 'react-markdown';
 
 interface ChatBotProps {
-  analysisResult: AnalysisResult;
   selectedOption?: SolutionOption | null;
 }
 
-export const ChatBot: React.FC<ChatBotProps> = ({ analysisResult, selectedOption }) => {
+export const ChatBot: React.FC<ChatBotProps> = ({ selectedOption }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome',

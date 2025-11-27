@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { AnalysisResult, SolutionOption } from '../types';
-import { Target, Layers, Cpu, Lightbulb, Zap, Rocket, BrainCircuit, BarChart3, Wrench, BellRing, MonitorPlay } from 'lucide-react';
+import { Target, Layers, Lightbulb, Zap, Rocket, BrainCircuit, Wrench, BellRing, MonitorPlay } from 'lucide-react';
 import { ChatBot } from './ChatBot';
 
 interface AnalysisViewProps {
@@ -192,7 +192,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({ result }) => {
 
           {/* Chat Bot */}
           <div className="w-full">
-            <ChatBot analysisResult={result} selectedOption={selectedOption} />
+            <ChatBot selectedOption={selectedOption} />
           </div>
 
         </div>
