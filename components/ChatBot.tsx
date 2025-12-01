@@ -21,6 +21,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({ selectedOption }) => {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Update welcome message when selection changes
   useEffect(() => {
@@ -44,6 +45,16 @@ export const ChatBot: React.FC<ChatBotProps> = ({ selectedOption }) => {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
+
+  // Auto-resize textarea logic
+  useEffect(() => {
+    if (textareaRef.current) {
+      // Reset height to auto to correctly calculate scrollHeight for shrinkage
+      textareaRef.current.style.height = 'auto';
+      // Set new height based on scrollHeight
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [input]);
 
   const handleSend = async () => {
     if (!input.trim() || isTyping) return;
@@ -94,6 +105,10 @@ export const ChatBot: React.FC<ChatBotProps> = ({ selectedOption }) => {
       }]);
     } finally {
       setIsTyping(false);
+      // Focus back on textarea after sending
+      setTimeout(() => {
+        if(textareaRef.current) textareaRef.current.focus();
+      }, 100);
     }
   };
 
@@ -173,18 +188,19 @@ export const ChatBot: React.FC<ChatBotProps> = ({ selectedOption }) => {
       <div className="p-3 bg-slate-900/90 border-t border-slate-800 relative z-10">
         <div className="relative flex items-end gap-2 bg-slate-950 border border-slate-700 rounded-xl p-1.5 focus-within:border-cyan-500/50 transition-colors">
           <textarea
+            ref={textareaRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="พิมพ์ข้อความ... (Enter เพื่อส่ง)"
-            className="w-full bg-transparent border-none focus:ring-0 resize-none text-xs text-slate-200 placeholder-slate-600 max-h-20 py-2 px-2 scrollbar-hide"
+            className="w-full bg-transparent border-none focus:ring-0 resize-none text-xs text-slate-200 placeholder-slate-600 py-2 px-2 scrollbar-hide overflow-hidden max-h-[300px]"
             rows={1}
             style={{ minHeight: '36px' }}
           />
           <button 
             onClick={handleSend}
             disabled={!input.trim() || isTyping}
-            className="p-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-500 disabled:bg-slate-800 disabled:text-slate-600 transition-colors"
+            className="p-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-500 disabled:bg-slate-800 disabled:text-slate-600 transition-colors mb-0.5"
           >
             <Send className="w-3 h-3" />
           </button>
