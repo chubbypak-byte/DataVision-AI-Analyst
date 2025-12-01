@@ -45,18 +45,26 @@ export const analyzeExcelContext = async (
     
     Data Headers: ${JSON.stringify(headers)}
     Sample Data: ${JSON.stringify(sampleData)}
+
+    *** DOMAIN KNOWLEDGE (กฎทางธุรกิจและคำศัพท์เฉพาะ) ***
+    1. Context: ระบบจัดการพลังงานไฟฟ้า (Energy Management & Meter Reading)
+    2. "unit": คือ หน่วยไฟฟ้า (Energy Unit) 
+       - เงื่อนไขสำคัญ: ค่าสามารถเป็น 0.00 ได้ (ปกติ) แต่ **ห้ามเป็นค่าว่าง (Null/Empty)** โดยเด็ดขาด หากพบค่าว่างคือความผิดปกติ
+    3. "station": คือ สถานีอ่านหน่วยมิเตอร์ (Meter Reading Station) ใช้ระบุจุดวัดและติดตามหน่วยไฟ
+    4. "PEA": คือ การไฟฟ้าส่วนภูมิภาค (Provincial Electricity Authority)
+    5. "pea_export": คือ หน่วยไฟฟ้าที่ระบบจ่ายออกไปให้ PEA (ขายคืน/จ่ายออก)
+    6. "pea_import": คือ หน่วยไฟฟ้าที่รับเข้ามาจาก PEA (ซื้อเข้า/รับเข้า)
     
     โปรดเสนอ 4 ทางเลือก (20%, 50%, 70%, 100%) โดยแต่ละข้อต้องระบุรายละเอียดให้ครบถ้วน:
     
-    1. Executive Benefits (ผู้บริหารได้อะไร?)
-    2. Operational Benefits (คนทำงานสบายขึ้นอย่างไร?)
-    3. Development Tools (เจาะจงเครื่องมือที่จะใช้ทำ เช่น Excel VBA, Power BI, Node.js, Python)
+    1. Executive Benefits (ผู้บริหารได้อะไร? เช่น การ Balance Load, การลดค่าใช้จ่ายจากการวิเคราะห์ Import/Export)
+    2. Operational Benefits (คนทำงานสบายขึ้นอย่างไร? เช่น ระบบแจ้งเตือนเมื่อพบ Unit ว่างเปล่า, การบันทึกค่า 0.00 ได้ถูกต้อง)
+    3. Development Tools (เจาะจงเครื่องมือที่จะใช้ทำ)
     4. Visualization Strategy (กลยุทธ์ภาพรวม)
-    5. **Concrete Outputs (สำคัญมาก)**: ต้องระบุรูปแบบการแสดงผลหรือการแจ้งเตือนที่เป็นรูปธรรมและเหมาะสมกับข้อมูลชุดนี้ที่สุด เช่น:
-       - ถ้ามีข้อมูลพื้นที่/จังหวัด: ให้เสนอ "Heatmap แสดงความหนาแน่น", "Bubble Map ตามพิกัด", "Map Dashboard"
-       - ถ้าเป็นข้อมูล Transaction/Stock: ให้เสนอ "Line Notify แจ้งเตือนเมื่อของหมด", "Webex Bot สรุปยอดรายชั่วโมง"
-       - ถ้าเป็นข้อมูลเปรียบเทียบ: ให้เสนอ "Bar Chart Race", "Sankey Diagram", "Treemap"
-       - ระบุให้ชัดเจนว่าจะเป็น Dashboard, Notification, หรือ Report แบบไหน
+    5. **Concrete Outputs (สำคัญมาก)**: ต้องระบุรูปแบบการแสดงผลหรือการแจ้งเตือนที่เป็นรูปธรรมและเหมาะสมกับบริบทไฟฟ้า เช่น:
+       - **Validation**: "Line Notify แจ้งเตือนทันทีเมื่อพบ Unit เป็นค่าว่าง", "Report ตรวจสอบ Station ที่ส่งข้อมูลไม่ครบ"
+       - **Energy Balance**: "Dashboard เปรียบเทียบ pea_import vs pea_export", "Graph แสดง Trend การใช้ไฟราย Station"
+       - **Map**: "Heatmap แสดง Station ที่มี Load สูง", "Map แสดงตำแหน่ง Station"
     
     6. Technologies (Stack ทางเทคนิค)
   `;
@@ -93,13 +101,18 @@ export const streamChatResponse = async (
     : `User has not selected a specific option yet.`;
 
   const systemInstruction = `
-    คุณคือ AI Consultant ผู้เชี่ยวชาญ
+    คุณคือ AI Consultant ผู้เชี่ยวชาญด้าน Energy Data Management
     บริบท: ${context}
+    
+    ความรู้เฉพาะทาง (Domain Knowledge):
+    - unit: เป็น 0.00 ได้ แต่ห้ามว่าง (Null)
+    - station: จุดอ่านมิเตอร์
+    - pea_import/export: การรับ/จ่ายไฟ กับการไฟฟ้า (PEA)
     
     หน้าที่:
     1. ตอบคำถามภาษาไทย ให้กระชับ ทันสมัย และเป็นมืออาชีพ
-    2. เน้นการให้คำปรึกษาเชิงเทคนิคและการบริหารจัดการที่เกี่ยวข้องกับทางเลือกที่ผู้ใช้สนใจ
-    3. หากถูกถามเรื่องการแสดงผล ให้แนะนำตาม Concrete Outputs ที่ระบุไว้ (เช่น Heatmap, Line Notify) และขยายความวิธีการทำได้
+    2. หากมีการถามเรื่อง Data Quality ให้เน้นเรื่องการตรวจสอบค่าว่างของ Unit
+    3. หากถามเรื่อง Report ให้แนะนำ Dashboard เปรียบเทียบ Import/Export
   `;
 
   try {

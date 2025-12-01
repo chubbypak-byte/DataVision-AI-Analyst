@@ -90,8 +90,8 @@ const App: React.FC = () => {
                 Senior Developer & Executive Tool
               </div>
               <h2 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight leading-tight drop-shadow-2xl">
-                เปลี่ยนข้อมูลดิบ เป็น <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-fuchsia-400">ทางเลือกเชิงกลยุทธ์</span>
+                ขับเคลื่อนข้อมูลดิบ <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-fuchsia-400">สู่กลยุทธ์การตัดสินใจ</span>
               </h2>
               <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed font-light">
                 เครื่องมือการวิเคราะห์ข้อมูล เพื่อพัฒนาให้เป็นอาวุธในการกำหนดกลยุทธองค์กร
